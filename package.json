@@ -1,0 +1,24 @@
+{
+  "name": "image-resizer",
+  "version": "1.0.0",
+  "description": "CLI tool to resize images and convert them to WebP format",
+  "main": "index.js",
+  "bin": {
+    "resize": "./bin/resize.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "image",
+    "resize",
+    "webp",
+    "cli"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sharp": "^0.33.0",
+    "commander": "^11.1.0"
+  }
+}
