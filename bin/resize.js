@@ -13,12 +13,24 @@ program
   .option('-o, --output <path>', 'Output directory or file path')
   .option('-w, --width <number>', 'Target width in pixels', parseInt)
   .option('-h, --height <number>', 'Target height in pixels', parseInt)
-  .option('-q, --quality <number>', 'WebP quality (1-100)', parseInt, 80)
+  .option('-q, --quality <number>', 'WebP quality (1-100)', (value) => {
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed) || parsed < 1 || parsed > 100) {
+      throw new Error(`Expected integer between 1 and 100 for quality but received ${value}`);
+    }
+    return parsed;
+  }, 80)
   .action(async (imagePath, options) => {
     try {
       // Check if input file exists
       if (!fs.existsSync(imagePath)) {
         console.error(`Error: Input file "${imagePath}" not found.`);
+        process.exit(1);
+      }
+      
+      // Ensure quality is a valid number (should already be validated by parser, but double-check)
+      if (options.quality !== undefined && (isNaN(options.quality) || options.quality < 1 || options.quality > 100)) {
+        console.error(`Error: Quality must be an integer between 1 and 100, got: ${options.quality}`);
         process.exit(1);
       }
 
@@ -77,8 +89,9 @@ program
       }
 
       // Convert to WebP and save
+      const quality = options.quality !== undefined ? options.quality : 80;
       await sharpInstance
-        .webp({ quality: options.quality })
+        .webp({ quality })
         .toFile(outputPath);
 
       console.log(`✓ Successfully converted to WebP: ${outputPath}`);
